@@ -23,6 +23,7 @@
                                                         <h5>Basic Table</h5>
 
                                                     </div>
+                                                    <form id="userForm">
                                                     <div class="row">
                                                         <div class="col-sm-4">
                                                             <select text="type" name="type"  id="type"class="form-control">
@@ -40,21 +41,14 @@
                                                         </div>
 
                                                     </div>
+                                                    <button type="submit" class="btn btn-success float-right" id="AddNew"> Add New transtion </button>
+
+                                                    </form>
                                                     <div class="card-block table-border-style">
                                                         <div class="table-responsive">
-                                                            <button class="btn btn-success float-right" id="AddNew"> Add New transtion </button>
-                                                            <table class="table" id="">
+                                                            <table class="table" id="userTable">
                                                                 <thead>
-                                                                    <tr>
-                                                                        <th>#</th>
-                                                                        <th>Amount</th>
-                                                                        <th>Type</th>
-                                                                        <th>Description</th>
-                                                                        <th>User</th>
-                                                                        <th>Date</th>
-                                                                        <th>Action</th>
-
-                                                                    </tr>
+                                                                   
                                                                 </thead>
                                                                 <tbody>
                                                                     
