@@ -48,6 +48,25 @@ function read_all_transaction($conn){
     echo json_encode($data);
 
 }
+function get_user_statement($conn){
+    extract($_POST);
+    $data= array();
+    $message= array();
+    $mysql= "CALL Get_user_statement_sp('USR400','$from','$to')";
+    $display= $conn->query($mysql);
+    if($display){
+        while($row= $display -> fetch_assoc()){
+            $data[] =$row;
+        }
+
+        $data= array("status" =>true , "data" => $data);
+
+    }else{
+        $message=array("status"=>false , "data"=>$conn->error);
+    }
+    echo json_encode($data);
+
+}
 
 function readtractionupdate($conn){
     $data= array();
