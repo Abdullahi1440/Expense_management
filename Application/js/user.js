@@ -1,45 +1,53 @@
- Loadfunction();
- let Btnaction="insert";
-$("#AddNew").on("click" ,function(){
-    $("#expensemodal").modal("show");
-});
+Loadfunction();
+// Loadfunction();
+let Btnaction="insert";
+let update;
+ let fileImage=document.querySelector("#image");
+ let showInput=document.querySelector("#show");
+ const reader=new FileReader();
+ fileImage.addEventListener("change", (e)=>{
+    const selectedFile = e.target.files[0];
+    reader.readAsDataURL(selectedFile);
 
-$("#Expenseform").on("submit", function(event){
+ });
+ reader.onload =e =>{
+    showInput.src=e.target.result;
+    
+ }
+$("#AddNew").on("click" ,function(){
+    $("#usermodal").modal("show");
+})
+
+ 
+$("#userform").on("submit", function(event){
     event.preventDefault();
     // console.log("submitted");
-    let Amount= $("#Amount").val();
-    let Type = $("#Type").val();
-    let Description = $("#Description").val();
-    let update_id = $("#update_id").val();
-        let sendingData ;
+    // let Amount= $("#Amount").val();
+    // let Type = $("#Type").val();
+    // let Description = $("#Description").val();
+    // let update_id = $("#update_id").val();
+    //     let sendingData ;
+    
+    let form_data =new FormData ($("#userform")[0]);
+    form_data.append("image",$("input[type=file]")[0].files[0]);
+
+    
         if(Btnaction=="insert"){
-         sendingData={
-           " Amount": Amount ,
-            "Type": Type ,
-            "Description": Description ,
-            "action": "Registration_exp",
+            form_data.append("action" ,  "registerUser");
             
-        }
+            
+   }else{
+    form_data.append("action ", "Updateusers");
 
    }
-    else{
-     sendingData={
-       " Amount": Amount ,
-        "Type": Type ,
-        "Description": Description ,
-        "action": "Updateexpense",
-            "update_id":  update_id
-        
-    }
-
-    }
-
-
     $.ajax({
         method:"POST" ,
         dataType: "JSON" ,
-        data: sendingData ,
-        url:"../api/expense.php" ,
+        data: form_data ,
+        url:"../api/user.php" ,
+       processData:false ,
+       contentType:false ,
+        
         success:function(data){
             let status= data.status;
             let response =data.data;
@@ -48,8 +56,8 @@ $("#Expenseform").on("submit", function(event){
                 // alert(response)
                 Displaymessage("success", response);
 
-                $("#Expenseform")[0].reset();
-                Loadfunction();
+                $("#userform")[0].reset();
+                // Loadfunction();
                     Btnaction="insert"
                 // $("#expensemodal").modal("hide");
                
@@ -65,15 +73,15 @@ $("#Expenseform").on("submit", function(event){
     })
   
 })
+
 function Loadfunction(){
-    $("#expenseTable tbody").html('');
-    let sendingData={
-        "action": "read_all_transaction",
+    $("#userList_table tbody").html('');    let sendingData={
+        "action": "userListfuction",
         
     }
    $.ajax({
     method:"POST" ,
-    url: "../api/expense.php" ,
+    url: "../api/user.php" ,
     dataType: "JSON" ,
     data: sendingData ,
     success: function(data){
@@ -83,21 +91,17 @@ function Loadfunction(){
         let tr = ''
         if(status){
             response.forEach(item => {
+                th="<tr>";
+                for(let i in item){
+                    th +=`<th>${i}</th>`;
+                }
+                th +="</tr>";
                 tr +="<tr>";
                 for(let i in item){
-                    if(i== "Type"){
-                        if(item[i]=="income"){
-                            tr +=`<td ><span class="badge badge-success">
-                            ${item[i]}</span></td>`;
-                        }else{
-                            tr +=`<td><span class="badge badge-secondary">${item[i]}</span>
-                            </td>`;
-                        }
-                        // if(item[i] == "income"){
-                        //     tr += `<td><span class="badge badge-success p-2">${item[i]}</span></td>`
-                        // }else{
-                        //     tr += `<td><span class="badge badge-danger p-2">${item[i]}</span></td>`
-                        // }
+                    if(i== "image"){
+                      
+                            tr +=`<td ><img style="width:50%;height:50%; border-radius:50%; object-fit:cover;"; src="../uploads/${item[i]}"</td/>`;
+                    
                      }else{
                          // console.log("this is " , i );
                              // console.log("this is " ,item);
@@ -116,7 +120,8 @@ function Loadfunction(){
             });
            
             // console.log(tr)
-            $("#expenseTable tbody" ).append(tr);   
+            $("#userList_table tbody" ).append(tr);  
+            $("#userList_table thead").append(th);
 
          
         }
@@ -131,7 +136,8 @@ function Loadfunction(){
    })
 
 }
-function updateexpenseinfo(id){
+
+    function updateuserinfo(id){
     let sendingData={
         "action": "readtractionupdate",
         "id": id
@@ -139,21 +145,24 @@ function updateexpenseinfo(id){
     }
    $.ajax({
     method:"POST" ,
-    url: "../api/expense.php" ,
+    url: "../api/user.php" ,
     dataType: "JSON" ,
     data: sendingData ,
     success: function(data){
         let status=data.status;
         let  response = data.data;
+     
         let html="";
         let tr = ''
         if(status){
+            $("#usermodal").modal("show");
             $("#update_id").val(response[0].id);
-            $("#Amount").val(response[0].Amount);
-            $("#Type").val(response[0].Type);
-            $("#Description").val(response[0].Description);
-            $("#expensemodal").modal("show");
+            $("#username").val(response[0].username);
+            $("#password").val(response[0].password);
+            $("#image").val(response[0].image);
             Btnaction="update";
+            Loadfunction();
+        
           
         }
   
@@ -175,7 +184,7 @@ function delete_info(id){
     }
     $.ajax({
         method:"POST" ,
-        url:"../api/expense.php" ,
+        url:"../api/user.php" ,
         dataType: "JSON" ,
         data: deletedata ,
         success: function(data){
@@ -211,13 +220,13 @@ function Displaymessage(type , message) {
     }
 }
 
-$("#expenseTable tbody").on("click" ,"a.update_info" , function(){
+$("#userList_table tbody").on("click" ,"a.update_info" , function(){
     let id=$(this).attr("update_id");
-    updateexpenseinfo(id);
+    updateuserinfo(id);
    
     
 })
-$("#expenseTable tbody").on("click" ,"a.delete_info" , function(){
+$("#userList_table tbody").on("click" ,"a.delete_info" , function(){
     let id=$(this).attr("delete_id");
     // console.log(id)
 if(confirm("are you sure to delete this record")){
@@ -226,3 +235,4 @@ if(confirm("are you sure to delete this record")){
    
     
 })
+

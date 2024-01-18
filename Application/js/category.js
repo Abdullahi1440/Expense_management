@@ -1,36 +1,40 @@
- Loadfunction();
+Loadfunction();
  let Btnaction="insert";
 $("#AddNew").on("click" ,function(){
-    $("#expensemodal").modal("show");
+    $("#categorymodal").modal("show");
 });
 
-$("#Expenseform").on("submit", function(event){
+$("#categoryform").on("submit", function(event){
     event.preventDefault();
-    // console.log("submitted");
-    let Amount= $("#Amount").val();
-    let Type = $("#Type").val();
-    let Description = $("#Description").val();
+    // let form_data=new FormData($("#categoryform")[0]);
+ 
     let update_id = $("#update_id").val();
-        let sendingData ;
+    let name=$("#name").val();
+    let icon=$("#icon").val();
+    let role=$("#role").val();
+    let sendingData;
         if(Btnaction=="insert"){
-         sendingData={
-           " Amount": Amount ,
-            "Type": Type ,
-            "Description": Description ,
-            "action": "Registration_exp",
-            
+          
+        //    sendingData= form_data.append("action", "Registration_category");
+        sendingData={
+                "name":name ,
+                "icon":icon ,
+                "role":role ,
+                "action":"Registration_category"       
         }
 
    }
     else{
-     sendingData={
-       " Amount": Amount ,
-        "Type": Type ,
-        "Description": Description ,
-        "action": "Updateexpense",
-            "update_id":  update_id
-        
+        sendingData={
+            "name":name ,
+            "icon":icon ,
+            "role":role ,
+           "update_id":update_id ,
+            "action":"Updatecategory"       
+   
     }
+
+
 
     }
 
@@ -39,7 +43,7 @@ $("#Expenseform").on("submit", function(event){
         method:"POST" ,
         dataType: "JSON" ,
         data: sendingData ,
-        url:"../api/expense.php" ,
+        url:"../api/category.php" ,
         success:function(data){
             let status= data.status;
             let response =data.data;
@@ -48,10 +52,10 @@ $("#Expenseform").on("submit", function(event){
                 // alert(response)
                 Displaymessage("success", response);
 
-                $("#Expenseform")[0].reset();
+                $("#categoryform")[0].reset();
                 Loadfunction();
                     Btnaction="insert"
-                // $("#expensemodal").modal("hide");
+                $("#categorysemodal").modal("hide");
                
             }else{
                 Displaymessage("error", response);
@@ -66,14 +70,14 @@ $("#Expenseform").on("submit", function(event){
   
 })
 function Loadfunction(){
-    $("#expenseTable tbody").html('');
+    $("#categoryTable tbody").html('');
     let sendingData={
-        "action": "read_all_transaction",
+        "action": "read_all_category",
         
     }
    $.ajax({
     method:"POST" ,
-    url: "../api/expense.php" ,
+    url: "../api/category.php" ,
     dataType: "JSON" ,
     data: sendingData ,
     success: function(data){
@@ -85,24 +89,25 @@ function Loadfunction(){
             response.forEach(item => {
                 tr +="<tr>";
                 for(let i in item){
-                    if(i== "Type"){
-                        if(item[i]=="income"){
-                            tr +=`<td ><span class="badge badge-success">
-                            ${item[i]}</span></td>`;
-                        }else{
-                            tr +=`<td><span class="badge badge-secondary">${item[i]}</span>
-                            </td>`;
-                        }
-                        // if(item[i] == "income"){
-                        //     tr += `<td><span class="badge badge-success p-2">${item[i]}</span></td>`
-                        // }else{
-                        //     tr += `<td><span class="badge badge-danger p-2">${item[i]}</span></td>`
-                        // }
-                     }else{
-                         // console.log("this is " , i );
-                             // console.log("this is " ,item);
-                          tr +=`<td>${item[i]}</td>`;
-                    }
+                    tr +=`<td>${item[i]}</td>`;
+                    // if(i== "Type"){
+                    //     if(item[i]=="income"){
+                    //         tr +=`<td ><span class="badge badge-success">
+                    //         ${item[i]}</span></td>`;
+                    //     }else{
+                    //         tr +=`<td><span class="badge badge-secondary">${item[i]}</span>
+                    //         </td>`;
+                    //     }
+                    //     // if(item[i] == "income"){
+                    //     //     tr += `<td><span class="badge badge-success p-2">${item[i]}</span></td>`
+                    //     // }else{
+                    //     //     tr += `<td><span class="badge badge-danger p-2">${item[i]}</span></td>`
+                    //     // }
+                    //  }else{
+                    //      // console.log("this is " , i );
+                    //          // console.log("this is " ,item);
+                         
+                    // }
 
                 }
                 tr +=`<td><a class="btn btn-success update_info" update_id=${item['id']} </a> <i class="fa fa-edit"></i> &nbsp;&nbsp;
@@ -116,7 +121,7 @@ function Loadfunction(){
             });
            
             // console.log(tr)
-            $("#expenseTable tbody" ).append(tr);   
+            $("#categoryTable tbody" ).append(tr);   
 
          
         }
@@ -131,7 +136,7 @@ function Loadfunction(){
    })
 
 }
-function updateexpenseinfo(id){
+function updatecategoryinfo(id){
     let sendingData={
         "action": "readtractionupdate",
         "id": id
@@ -139,7 +144,7 @@ function updateexpenseinfo(id){
     }
    $.ajax({
     method:"POST" ,
-    url: "../api/expense.php" ,
+    url: "../api/category.php" ,
     dataType: "JSON" ,
     data: sendingData ,
     success: function(data){
@@ -149,10 +154,10 @@ function updateexpenseinfo(id){
         let tr = ''
         if(status){
             $("#update_id").val(response[0].id);
-            $("#Amount").val(response[0].Amount);
-            $("#Type").val(response[0].Type);
-            $("#Description").val(response[0].Description);
-            $("#expensemodal").modal("show");
+            $("#name").val(response[0].name);
+            $("#icon").val(response[0].icon);
+            $("#role").val(response[0].role);
+            $("#categorymodal").modal("show");
             Btnaction="update";
           
         }
@@ -175,7 +180,7 @@ function delete_info(id){
     }
     $.ajax({
         method:"POST" ,
-        url:"../api/expense.php" ,
+        url:"../api/category.php" ,
         dataType: "JSON" ,
         data: deletedata ,
         success: function(data){
@@ -211,13 +216,13 @@ function Displaymessage(type , message) {
     }
 }
 
-$("#expenseTable tbody").on("click" ,"a.update_info" , function(){
+$("#categoryTable tbody").on("click" ,"a.update_info" , function(){
     let id=$(this).attr("update_id");
-    updateexpenseinfo(id);
+    updatecategoryinfo(id);
    
     
 })
-$("#expenseTable tbody").on("click" ,"a.delete_info" , function(){
+$("#categoryTable tbody").on("click" ,"a.delete_info" , function(){
     let id=$(this).attr("delete_id");
     // console.log(id)
 if(confirm("are you sure to delete this record")){

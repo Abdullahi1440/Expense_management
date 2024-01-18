@@ -58,6 +58,8 @@
                                                             </table>
 
                                                         </div>
+                                                        <button class="btn btn-success" id="print-statement"><i class="fa fa-print"></i></button>
+                                                        <button class="btn btn-info" id="export-statement"> <i class="fa fa-file"> export</i></i></button>
                                                     </div>
                                                 </div>
                                             </div>

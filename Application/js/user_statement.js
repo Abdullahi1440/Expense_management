@@ -10,6 +10,21 @@ $("#type").on("change",function(){
         $("#to").attr("disabled",false);
     }
 })
+// newWindow.document.write(printArea.innerHTML);
+// newWindow.document.write('</body></html>');
+// newWindow.print();
+// newWindow.close();
+$("#print-statement").on("click" ,function(){
+    let file = new Blob([$('#print_area').html()],{type:'application/vnd.ms-excel'});
+    let url=URL.createObjectURL(file);
+    let  a=$("<a/>",{
+        href:url ,
+        download:"print-statement.xls"}).appendTo("body").get(0).click();
+        e.preventDefault();
+    }
+    );
+    
+
 $("#userForm").on("submit", function(event){
    event.preventDefault();
    $("#userTable thead").html("");
